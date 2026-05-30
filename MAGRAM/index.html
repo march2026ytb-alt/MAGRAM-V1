@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAGRAM | Study Portal & Resource Vault</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="dark-theme">
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i data-lucide="graduation-cap" class="logo-icon"></i>
+                    <span>MAGRAM</span>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" data-view="explorer">
+                    <i data-lucide="book-open"></i>
+                    <span>Subject Explorer</span>
+                </button>
+                <button class="nav-item" data-view="focus">
+                    <i data-lucide="timer"></i>
+                    <span>Focus Space</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="auth-status-card">
+                    <div class="status-indicator-wrapper">
+                        <span class="status-dot pulsing" id="statusDot"></span>
+                        <span class="status-text" id="statusText">Viewer Mode</span>
+                    </div>
+                    <p class="status-description">Read-only access</p>
+                    <button class="auth-toggle-btn" id="authBtn">
+                        <i data-lucide="lock" id="authBtnIcon"></i>
+                        <span id="authBtnText">Unlock Editor</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <main class="main-content">
+            <!-- Global Top Bar -->
+            <header class="top-bar">
+                <div class="view-title-container">
+                    <span class="breadcrumb">PORTAL</span>
+                    <h1 class="view-title" id="mainTitle">Subject Explorer</h1>
+                </div>
+                <div class="quick-stats">
+                    <div class="stat-badge">
+                        <i data-lucide="book"></i>
+                        <span>Subjects: <strong id="globalSubjectCount">0</strong></span>
+                    </div>
+                    <div class="stat-badge focus-time">
+                        <i data-lucide="clock"></i>
+                        <span>Focus Today: <strong id="globalFocusTime">0m</strong></span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dynamic Views Frame -->
+            <div class="view-container">
+                <!-- VIEW 1: SUBJECT EXPLORER -->
+                <section id="view-explorer" class="view-panel active">
+                    <div class="explorer-toolbar">
+                        <div class="search-box">
+                            <i data-lucide="search"></i>
+                            <input type="text" id="subjectSearch" placeholder="Search subjects...">
+                        </div>
+                        <button class="btn btn-primary admin-only hidden" id="createNewSubjectBtn">
+                            <i data-lucide="plus"></i>
+                            <span>Add New Subject</span>
+                        </button>
+                    </div>
+
+                    <!-- Explorer Dashboard Split Layout -->
+                    <div class="explorer-dashboard-layout">
+                        <!-- Left Panel: Subjects Grid -->
+                        <div class="explorer-main-col">
+                            <div class="subjects-grid" id="subjectsGrid">
+                                <!-- Dynamic subject cards rendered here -->
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Bulletins & Overview -->
+                        <div class="explorer-side-col">
+                            <!-- Welcome/Overview Card -->
+                            <div class="card card-glass portal-overview-card mb-6">
+                                <div class="card-header">
+                                    <div class="header-icon-title">
+                                        <i data-lucide="info" class="text-primary"></i>
+                                        <h3>Portal Overview</h3>
+                                    </div>
+                                    <button class="btn btn-sm btn-accent admin-only hidden" id="editPortalDescBtn">
+                                        <i data-lucide="pencil"></i>
+                                        <span>Edit</span>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <p class="portal-description-text" id="portalDescText">
+                                        Welcome to MAGRAM Study Portal. A central hub for syllabus topics, educational resources, past question papers, and focus schedules.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Bulletins Card -->
+                            <div class="card card-glass announcements-card">
+                                <div class="card-header">
+                                    <div class="header-icon-title">
+                                        <i data-lucide="megaphone" class="text-accent"></i>
+                                        <h3>Announcements & Updates</h3>
+                                    </div>
+                                    <button class="btn btn-sm btn-accent admin-only hidden" id="addAnnouncementBtn">
+                                        <i data-lucide="plus"></i>
+                                        <span>Post</span>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="announcements-list" id="announcementsList">
+                                        <!-- Dynamic announcements loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 2: SUBJECT DETAIL HUB -->
+                <section id="view-subject-detail" class="view-panel">
+                    <div class="subject-detail-header">
+                        <button class="btn-back" id="backToExplorer">
+                            <i data-lucide="arrow-left"></i>
+                            <span>Back to Subjects</span>
+                        </button>
+                        <div class="subject-title-area">
+                            <h2 class="subject-name-large" id="subjectDetailName">Subject Name</h2>
+                            <span class="subject-meta-pill" id="subjectDetailCode">SUBJ101</span>
+                            <button class="btn btn-sm btn-accent admin-only hidden" id="editActiveSubjectBtn" style="margin-left: 12px;">
+                                <i data-lucide="pencil"></i>
+                                <span>Edit Subject</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="subject-grid-layout">
+                        <!-- Left Column: Syllabus & YouTube Materials -->
+                        <div class="subject-col syllabus-col">
+                            <div class="card card-glass syllabus-card">
+                                <div class="card-header">
+                                    <div class="header-icon-title">
+                                        <i data-lucide="list-checks" class="text-accent"></i>
+                                        <h3>Syllabus Topics & YouTube Resources</h3>
+                                    </div>
+                                    <button class="btn btn-sm btn-accent admin-only hidden" id="addTopicBtn">
+                                        <i data-lucide="plus"></i>
+                                        <span>Add Topic</span>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="search-box sm">
+                                        <i data-lucide="search"></i>
+                                        <input type="text" id="topicSearch" placeholder="Filter topics...">
+                                    </div>
+                                    <div class="topics-accordion" id="topicsAccordion">
+                                        <!-- Dynamic topics rendered here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Resource Vault (Question Papers & Notes) -->
+                        <div class="subject-col resources-col">
+                            <!-- Question Papers Vault -->
+                            <div class="card card-glass resources-card">
+                                <div class="card-header">
+                                    <div class="header-icon-title">
+                                        <i data-lucide="file-text" class="text-primary"></i>
+                                        <h3>Past Question Papers</h3>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Drag & Drop Uploader -->
+                                    <div class="file-uploader admin-only hidden" id="uploaderPapers">
+                                        <input type="file" id="fileInputPapers" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" hidden>
+                                        <div class="upload-content">
+                                            <i data-lucide="upload-cloud"></i>
+                                            <p>Drag & Drop or <span class="browse-link">browse</span> to upload Question Paper</p>
+                                            <span class="file-size-limit">PDF, DOC, Images (Max 20MB)</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="file-list" id="papersFileList">
+                                        <!-- Dynamic files loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Study Notes Vault -->
+                            <div class="card card-glass resources-card mt-6">
+                                <div class="card-header">
+                                    <div class="header-icon-title">
+                                        <i data-lucide="book-marked" class="text-secondary"></i>
+                                        <h3>Study Notes & materials</h3>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Drag & Drop Uploader -->
+                                    <div class="file-uploader admin-only hidden" id="uploaderNotes">
+                                        <input type="file" id="fileInputNotes" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg" hidden>
+                                        <div class="upload-content">
+                                            <i data-lucide="upload-cloud"></i>
+                                            <p>Drag & Drop or <span class="browse-link">browse</span> to upload Study Notes</p>
+                                            <span class="file-size-limit">PDF, DOC, Text (Max 20MB)</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="file-list" id="notesFileList">
+                                        <!-- Dynamic files loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 3: FOCUS SPACE (POMODORO) -->
+                <section id="view-focus" class="view-panel">
+                    <div class="focus-grid-layout">
+                        <!-- Timer Engine -->
+                        <div class="focus-col timer-col">
+                            <div class="card card-glass timer-card">
+                                <div class="timer-presets">
+                                    <button class="preset-btn active" data-duration="1500" data-mode="work">Focus (25m)</button>
+                                    <button class="preset-btn" data-duration="300" data-mode="short">Short Break (5m)</button>
+                                    <button class="preset-btn" data-duration="900" data-mode="long">Long Break (15m)</button>
+                                </div>
+
+                                <div class="timer-dial-container">
+                                    <svg class="progress-ring" width="280" height="280">
+                                        <circle class="progress-ring__circle-bg" stroke="rgba(255,255,255,0.03)" stroke-width="8" fill="transparent" r="120" cx="140" cy="140"/>
+                                        <circle class="progress-ring__circle" id="timerProgressCircle" stroke="var(--accent-glow)" stroke-width="8" stroke-dasharray="753.98" stroke-dashoffset="0" fill="transparent" r="120" cx="140" cy="140"/>
+                                    </svg>
+                                    <div class="timer-text-overlay">
+                                        <span class="time-display" id="timeDisplay">25:00</span>
+                                        <span class="timer-status-label" id="timerLabel">READY</span>
+                                    </div>
+                                </div>
+
+                                <div class="timer-controls">
+                                    <button class="btn-timer btn-timer-sec" id="timerResetBtn" title="Reset">
+                                        <i data-lucide="rotate-ccw"></i>
+                                    </button>
+                                    <button class="btn-timer btn-timer-primary" id="timerPlayBtn" title="Start">
+                                        <i data-lucide="play" id="playIcon"></i>
+                                    </button>
+                                    <div class="spacer" style="width: 50px;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Audio Mixer Board -->
+                        <div class="focus-col mixer-col">
+                            <div class="card card-glass sound-mixer-card">
+                                <div class="card-header">
+                                    <div class="header-icon-title">
+                                        <i data-lucide="sliders" class="text-accent"></i>
+                                        <h3>Focus Ambience Soundboard</h3>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p class="mixer-description">Layer synthesized background audio nodes to mask distractions and build deep focus.</p>
+                                    
+                                    <div class="sound-tracks-list">
+                                        <!-- Sound Channel 1: Rain -->
+                                        <div class="sound-row" data-sound="rain">
+                                            <div class="sound-info">
+                                                <i data-lucide="cloud-rain" class="sound-icon"></i>
+                                                <span class="sound-name">Cosmic Rain</span>
+                                            </div>
+                                            <div class="sound-controls">
+                                                <button class="sound-toggle" title="Toggle Sound">
+                                                    <i data-lucide="play"></i>
+                                                </button>
+                                                <input type="range" class="sound-slider" min="0" max="1" step="0.05" value="0.5" disabled>
+                                            </div>
+                                        </div>
+
+                                        <!-- Sound Channel 2: Brown Noise -->
+                                        <div class="sound-row" data-sound="brownian">
+                                            <div class="sound-info">
+                                                <i data-lucide="waves" class="sound-icon"></i>
+                                                <span class="sound-name">Deep Brown Noise</span>
+                                            </div>
+                                            <div class="sound-controls">
+                                                <button class="sound-toggle" title="Toggle Sound">
+                                                    <i data-lucide="play"></i>
+                                                </button>
+                                                <input type="range" class="sound-slider" min="0" max="1" step="0.05" value="0.5" disabled>
+                                            </div>
+                                        </div>
+
+                                        <!-- Sound Channel 3: Forest Birds -->
+                                        <div class="sound-row" data-sound="forest">
+                                            <div class="sound-info">
+                                                <i data-lucide="trees" class="sound-icon"></i>
+                                                <span class="sound-name">Forest Sanctuary</span>
+                                            </div>
+                                            <div class="sound-controls">
+                                                <button class="sound-toggle" title="Toggle Sound">
+                                                    <i data-lucide="play"></i>
+                                                </button>
+                                                <input type="range" class="sound-slider" min="0" max="1" step="0.05" value="0.5" disabled>
+                                            </div>
+                                        </div>
+
+                                        <!-- Sound Channel 4: Coffee Shop -->
+                                        <div class="sound-row" data-sound="cafe">
+                                            <div class="sound-info">
+                                                <i data-lucide="coffee" class="sound-icon"></i>
+                                                <span class="sound-name">Espresso Lounge</span>
+                                            </div>
+                                            <div class="sound-controls">
+                                                <button class="sound-toggle" title="Toggle Sound">
+                                                    <i data-lucide="play"></i>
+                                                </button>
+                                                <input type="range" class="sound-slider" min="0" max="1" step="0.05" value="0.5" disabled>
+                                            </div>
+                                        </div>
+
+                                        <!-- Sound Channel 5: Lo-Fi Synth Beats -->
+                                        <div class="sound-row" data-sound="lofi">
+                                            <div class="sound-info">
+                                                <i data-lucide="music" class="sound-icon"></i>
+                                                <span class="sound-name">Lofi Focus Chords</span>
+                                            </div>
+                                            <div class="sound-controls">
+                                                <button class="sound-toggle" title="Toggle Sound">
+                                                    <i data-lucide="play"></i>
+                                                </button>
+                                                <input type="range" class="sound-slider" min="0" max="1" step="0.05" value="0.5" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL 1: AUTHENTICATION LOCK DIALOG -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <i data-lucide="shield-alert" class="modal-icon text-accent"></i>
+                <h3>Authorize Editor Status</h3>
+                <p>Only authorized contributors can upload assets, add new subjects, edit syllabus matrices, or link external assets.</p>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="passcodeField">Admin Authorization Passcode</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="passcodeField" placeholder="Enter admin passcode">
+                        <button type="button" id="togglePasscodeVisibilityBtn">
+                            <i data-lucide="eye" id="passcodeEyeIcon"></i>
+                        </button>
+                    </div>
+                    <span class="error-msg" id="authError">Incorrect authorization key. Access denied.</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sec" id="cancelAuthBtn">Cancel</button>
+                <button class="btn btn-accent" id="submitAuthBtn">Authenticate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ADD SUBJECT DIALOG -->
+    <div class="modal-overlay" id="addSubjectModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <i data-lucide="plus-circle" class="modal-icon text-primary"></i>
+                <h3>Create Study Subject</h3>
+                <p>Establish a brand new subject dashboard for compiling coursework assets.</p>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="subjectNameField">Subject Title</label>
+                    <input type="text" id="subjectNameField" placeholder="e.g., Quantum Physics, Literature II">
+                </div>
+                <div class="form-group">
+                    <label for="subjectCodeField">Course/Subject Code</label>
+                    <input type="text" id="subjectCodeField" placeholder="e.g., PHY-201, ENG-340">
+                </div>
+                <div class="form-group">
+                    <label>Aesthetic Theme Accent Color</label>
+                    <div class="color-picker-grid">
+                        <div class="color-swatch active" data-color="blue" style="background: linear-gradient(135deg, #1e40af, #3b82f6);"></div>
+                        <div class="color-swatch" data-color="purple" style="background: linear-gradient(135deg, #5b21b6, #8b5cf6);"></div>
+                        <div class="color-swatch" data-color="teal" style="background: linear-gradient(135deg, #0f766e, #0d9488);"></div>
+                        <div class="color-swatch" data-color="green" style="background: linear-gradient(135deg, #065f46, #10b981);"></div>
+                        <div class="color-swatch" data-color="orange" style="background: linear-gradient(135deg, #9a3412, #f97316);"></div>
+                        <div class="color-swatch" data-color="rose" style="background: linear-gradient(135deg, #9f1239, #f43f5e);"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="subjectIconField">Visual Icon Type</label>
+                    <select id="subjectIconField">
+                        <option value="book-open">Standard Text Book</option>
+                        <option value="atom">Atom & Scientific Symbol</option>
+                        <option value="code">Source Code Brackets</option>
+                        <option value="calculator">Mathematical Calculator</option>
+                        <option value="globe">Globe & Geography</option>
+                        <option value="palette">Art Palette & Design</option>
+                        <option value="flask-conical">Flask & Chemistry</option>
+                        <option value="scroll">Scroll & History</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sec" id="cancelAddSubjectBtn">Dismiss</button>
+                <button class="btn btn-primary" id="submitAddSubjectBtn">Create Subject</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: ADD SYLLABUS TOPIC DIALOG -->
+    <div class="modal-overlay" id="addTopicModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <i data-lucide="list-plus" class="modal-icon text-accent"></i>
+                <h3>Append Syllabus Topic</h3>
+                <p>Add a new instructional topic block to your subject board.</p>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="topicNameField">Topic Title</label>
+                    <input type="text" id="topicNameField" placeholder="e.g., Quantum Entanglement, Trigonometric Integrals">
+                </div>
+                <div class="form-group">
+                    <label for="topicDescField">Overview Details (Optional)</label>
+                    <textarea id="topicDescField" rows="3" placeholder="Provide a brief summary or key takeaways for this topic..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sec" id="cancelAddTopicBtn">Dismiss</button>
+                <button class="btn btn-accent" id="submitAddTopicBtn">Append Topic</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: ADD YOUTUBE LINK DIALOG -->
+    <div class="modal-overlay" id="addYoutubeModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <i data-lucide="video" class="modal-icon text-red"></i>
+                <h3>Attach YouTube Video Reference</h3>
+                <p>Curate educational video lectures or demonstrations for this syllabus topic.</p>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="ytTitleField">Reference Video Label</label>
+                    <input type="text" id="ytTitleField" placeholder="e.g., CrashCourse Explanation, MIT Lecture Series">
+                </div>
+                <div class="form-group">
+                    <label for="ytUrlField">YouTube Lecture URL</label>
+                    <input type="url" id="ytUrlField" placeholder="e.g., https://www.youtube.com/watch?v=...">
+                    <span class="error-msg" id="ytUrlError">Please enter a valid YouTube video URL.</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sec" id="cancelAddYtBtn">Dismiss</button>
+                <button class="btn btn-accent" id="submitAddYtBtn">Attach Link</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 5: ADD ANNOUNCEMENT DIALOG -->
+    <div class="modal-overlay" id="addAnnouncementModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <i data-lucide="megaphone" class="modal-icon text-accent"></i>
+                <h3>Post Board Announcement</h3>
+                <p>Broadcast alerts, schedules, or updates directly to the student portal home page.</p>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="annTitleField">Announcement Title</label>
+                    <input type="text" id="annTitleField" placeholder="e.g., Final Exam Syllabus Released, Schedule Update">
+                </div>
+                <div class="form-group">
+                    <label for="annContentField">Broadcast Message</label>
+                    <textarea id="annContentField" rows="4" placeholder="Enter announcement body text here..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sec" id="cancelAddAnnBtn">Dismiss</button>
+                <button class="btn btn-accent" id="submitAddAnnBtn">Post Announcement</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 6: EDIT PORTAL DESCRIPTION DIALOG -->
+    <div class="modal-overlay" id="editPortalDescModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <i data-lucide="info" class="modal-icon text-primary"></i>
+                <h3>Edit Portal Overview</h3>
+                <p>Modify the welcome message and portal description guidelines displayed at the top of the dashboard.</p>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="portalDescField">Overview & Description Text</label>
+                    <textarea id="portalDescField" rows="5" placeholder="Enter welcome description..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sec" id="cancelEditDescBtn">Dismiss</button>
+                <button class="btn btn-primary" id="submitPortalDescBtn">Save Overview</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation Bar -->
+    <nav class="mobile-bottom-nav">
+        <button class="mobile-nav-item active" data-view="explorer">
+            <i data-lucide="book-open"></i>
+            <span>Explorer</span>
+        </button>
+        <button class="mobile-nav-item" data-view="focus">
+            <i data-lucide="timer"></i>
+            <span>Focus</span>
+        </button>
+        <button class="mobile-nav-item" id="mobileAuthBtn">
+            <i data-lucide="lock" id="mobileAuthIcon"></i>
+            <span id="mobileAuthText">Admin</span>
+        </button>
+    </nav>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>
